@@ -14,3 +14,11 @@
 ## 已知限制
 
 - 构建范围匹配不能保证产品依赖与运行兼容性，最终由目标 IDE 安装时检查。
+
+## 自动构建
+
+- 每次向 GitHub 推送提交、创建或更新 PR 时，自动构建 Release 版本，也可在 Actions 页面手动运行 `Build macOS app`。
+- 使用 Xcode 27 runner，构建包含 Apple Silicon 与 Intel 的通用应用；成功后可在该次运行的 Artifacts 下载应用 ZIP，保留 14 天。
+- 构建产物未签名、未公证，不属于正式发行包，无需配置 Apple 开发者证书。
+- 本地安装完整 Xcode 27 后，可运行 `bash scripts/build.sh`，产物默认保存到 `build/`；也可通过第一个参数指定输出目录。
+- 本地 `git commit` 不会触发 GitHub Actions，提交推送到 GitHub 后才会触发。

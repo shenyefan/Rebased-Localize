@@ -1,0 +1,39 @@
+name: Build macOS app
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # The project uses the Xcode 27 project format (objectVersion 90).
+    runs-on: xcode-27
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build and package Release app
+        run: bash scripts/build.sh "$RUNNER_TEMP/rebased-localize-build"
+
+      - name: Upload app
+        uses: actions/upload-artifact@v7
+        with:
+          name: Rebased-Localize-macOS-${{ github.sha }}
+          path: ${{ runner.temp }}/rebased-localize-build/Rebased-Localize-macOS.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
